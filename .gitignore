@@ -18,3 +18,5 @@ server/bin
 !.vscode/extensions.json
 .history/*
 
+# Environment
+*.env
