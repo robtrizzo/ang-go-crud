@@ -7,9 +7,27 @@ networks:
     driver: bridge
 
 services:
+
+  db:
+    image: postgres
+    hostname: localhost
+    networks:
+      - ang-go-crud-network
+    ports:
+      - "5432:5432"
+    env_file:
+      - .db.dev.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
   server:
+    depends_on:
+      - db
     build:
       dockerfile: Dockerfile.server.dev
+    env_file:
+      - .server.dev.env
     networks:
       - ang-go-crud-network
     volumes:
@@ -30,3 +48,6 @@ services:
       - /app/node_modules
     ports:
       - '4200:4200'
+
+volumes:
+  pgdata:
