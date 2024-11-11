@@ -10,6 +10,10 @@ Database uses PostgreSQL
 
 ## Dev Environment
 
+Create `.server.dev.env` and `.db.dev.env` files - use the example env files as references for what they require.
+
+> Note: docker-compose persistent volumes don't refresh between restarts, so if you change the `.db.dev.env` vars, make sure to tear down the `pgdata` volume with `docker-compose -f docker-compose.dev.yml down -v`.
+
 Build the dev project with `docker-compose -f docker-compose.dev.yml build`. Run it with `docker-compose -f docker-compose.dev.yml up`.
 
 Navigate to `http://localhost:4200` to view the client. Run `curl localhost:1323` to test the server.
@@ -18,7 +22,9 @@ Navigate to `http://localhost:4200` to view the client. Run `curl localhost:1323
 
 #### Server
 
-run `go mod download`
+Create a `/server/.env` file with the DB_URL var. Use `.server.env.example` as an example.
+
+Run `go mod download`
 
 Navigate to the `/server` directory and run `go run main.go`.
 
