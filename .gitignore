@@ -3,6 +3,13 @@ client/node_modules
 client/npm-debug.log
 client/yarn-error.log
 
+# Angular
+client/.angular/cache
+
+# Go
+server/tmp
+server/bin
+
 # Visual Studio Code
 .vscode/*
 !.vscode/settings.json
@@ -11,5 +18,3 @@ client/yarn-error.log
 !.vscode/extensions.json
 .history/*
 
-# Miscellaneous
-client/.angular/cache

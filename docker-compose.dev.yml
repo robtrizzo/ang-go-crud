@@ -7,7 +7,20 @@ networks:
     driver: bridge
 
 services:
+  server:
+    build:
+      dockerfile: Dockerfile.server.dev
+    networks:
+      - ang-go-crud-network
+    volumes:
+      - ./server:/app/
+      - /app/tmp
+    ports: 
+      - '1323:1323'
+
   client:
+    depends_on:
+      - server
     build:
       dockerfile: Dockerfile.client.dev
     networks:
