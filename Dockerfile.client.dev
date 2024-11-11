@@ -1,0 +1,19 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+RUN npm install -g @angular/cli@16
+
+COPY client/package.json .
+COPY client/package-lock.json .
+
+RUN npm install --legacy-peer-deps
+
+COPY client/ .
+
+EXPOSE 4200
+
+# Binding server to an open connection was requred to open traffic through the docker container.
+# Angular CLI warns us that if the application ever uses websockets that it may require changing
+# this behavior and/or using the --disable-host-check flag.
+CMD ng serve --host 0.0.0.0

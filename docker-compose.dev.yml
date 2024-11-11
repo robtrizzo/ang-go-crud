@@ -1,0 +1,19 @@
+version: '3.8'
+
+name: ang-go-crud
+
+networks:
+  ang-go-crud-network:
+    driver: bridge
+
+services:
+  client:
+    build:
+      dockerfile: Dockerfile.client.dev
+    networks:
+      - ang-go-crud-network
+    volumes:
+      - ./client/src:/app/src
+      - /app/node_modules
+    ports:
+      - '4200:4200'
