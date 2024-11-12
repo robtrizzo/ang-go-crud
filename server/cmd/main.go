@@ -14,9 +14,10 @@ func init() {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
 	}
-	defer model.Close()
+
 }
 
 func main() {
 	router.Route()
+	defer model.Close()
 }
