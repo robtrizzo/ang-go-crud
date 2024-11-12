@@ -19,7 +19,7 @@ func GetAllUsers(getAllUsers GetAllUsersFunc) echo.HandlerFunc {
 		users, err := getAllUsers()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error in GetAllUsers controller: %v\n", err)
-			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal server error"})
+			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 		return c.JSON(http.StatusOK, users)
 	}
@@ -39,7 +39,7 @@ func InsertUser(insertUser InsertUsersFunc) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 		if err := insertUser(*userToInsert); err != nil {
-			return c.JSON(http.StatusBadRequest, err.Error())
+			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 		return c.JSON(http.StatusOK, map[string]string{"message": "User inserted"})
 	}
@@ -87,7 +87,7 @@ func UpdateUser(updateUser UpdateUserFunc) echo.HandlerFunc {
 			if errors.Is(err, model.ErrUserNotFound) {
 				return c.JSON(http.StatusNotFound, map[string]string{"error": "User not found"})
 			}
-			return c.JSON(http.StatusBadRequest, err.Error())
+			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 		return c.JSON(http.StatusOK, map[string]string{"message": "User updated"})
 	}
