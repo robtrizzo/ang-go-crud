@@ -7,16 +7,16 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"server/models"
+	"server/model"
 )
 
 func init() {
-	err := models.Connect()
+	err := model.Connect()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
 	}
-	defer models.Close()
+	defer model.Close()
 }
 
 func main() {
@@ -26,7 +26,7 @@ func main() {
 		return c.String(http.StatusOK, "Hello World!!")
 	})
 	e.GET("/users", func(c echo.Context) error {
-		users, err := models.GetAllUsers()
+		users, err := model.GetAllUsers()
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "Internal Server Error")
 		}
