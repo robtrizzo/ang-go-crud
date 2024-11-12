@@ -1,15 +1,19 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 	"server/model"
 
 	"github.com/labstack/echo/v4"
 )
 
 func GetAllUsers(c echo.Context) error {
+	fmt.Printf("GetAllUsers\n")
 	users, err := model.GetAllUsers()
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "error in GetAllUsers controller: %v\n", err)
 		return c.String(http.StatusInternalServerError, "Internal Server Error")
 	}
 	return c.JSON(http.StatusOK, users)
