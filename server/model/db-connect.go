@@ -72,6 +72,6 @@ func initDB() {
 	}
 	err = createTestUser()
 	if err != nil {
-		fmt.Printf("failed to create test user%v\n", err)
+		fmt.Println(err.Error())
 	}
 }
