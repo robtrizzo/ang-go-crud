@@ -70,4 +70,8 @@ func initDB() {
 		fmt.Printf("failed to init users table: %v\n", err)
 		os.Exit(1)
 	}
+	err = createTestUser()
+	if err != nil {
+		fmt.Printf("failed to create test user%v\n", err)
+	}
 }
