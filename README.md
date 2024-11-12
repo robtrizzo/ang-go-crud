@@ -41,3 +41,12 @@ Run `npm install --legacy-peer-deps`
 Run `ng serve`
 
 Navigate to `http://localhost:4200` to view the client.
+
+
+## Testing
+
+### Server
+
+Navigate to `/server`
+
+Run `go test ./controller`
