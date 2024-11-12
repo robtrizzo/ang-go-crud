@@ -1,8 +1,12 @@
 package router
 
-import "server/controller"
+import (
+	"server/controller"
 
-func userRoutes() {
+	"github.com/labstack/echo/v4"
+)
+
+func userRoutes(e *echo.Echo) {
 
 	usersGroup := e.Group("/users")
 	usersGroup.GET("", controller.GetAllUsers)

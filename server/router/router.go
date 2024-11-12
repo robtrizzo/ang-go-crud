@@ -6,11 +6,9 @@ import (
 	"server/controller"
 )
 
-var e *echo.Echo
-
 func Route() {
 	e := echo.New()
 	e.GET("/", controller.HealthCheck)
-	userRoutes()
+	userRoutes(e)
 	e.Logger.Fatal(e.Start(":1323"))
 }
