@@ -26,7 +26,7 @@ Create a `/server/.env` file with the DB_URL var. Use `.server.env.example` as a
 
 Run `go mod download`
 
-Navigate to the `/server` directory and run `go run main.go`.
+Navigate to the `/server` directory and run `go run cmd/main.go`.
 
 Run `curl localhost:1323` to test the server.
 
