@@ -63,9 +63,6 @@ export class UserComponent implements OnInit {
       data: {user_id: this.user.user_id, user_name: this.user.user_name},
     });
 
-    // dialogRef.afterClosed().subscribe(result => {
-    //   console.log('The dialog was closed');
-    // });
   }
 
   ngOnInit() {
@@ -75,6 +72,7 @@ export class UserComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('Error fetching user', err);
+        this.user = undefined
       },
       complete: () => {
         console.log('Users fetch complete');

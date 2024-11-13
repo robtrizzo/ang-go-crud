@@ -109,6 +109,7 @@ export class EditUserComponent implements OnInit{
       },
       error: (err: any) => {
         console.error('Error fetching user', err);
+        this.user = undefined
       },
       complete: () => {
         console.log('Users fetch complete');
