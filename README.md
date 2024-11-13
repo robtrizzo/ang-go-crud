@@ -16,7 +16,7 @@ Create `.server.dev.env` and `.db.dev.env` files - use the example env files as 
 
 Build the dev project with `docker-compose -f docker-compose.dev.yml build`. Run it with `docker-compose -f docker-compose.dev.yml up`.
 
-Navigate to `http://localhost:4200` to view the client. Run `curl localhost:1323` to test the server.
+Navigate to `http://localhost:4200` to view the client. Run `curl localhost:1323` to healthcheck the server.
 
 ### Without Docker
 
