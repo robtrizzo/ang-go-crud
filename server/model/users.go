@@ -15,8 +15,8 @@ type (
 		UserName   string `json:"user_name" validate:"required"`
 		FirstName  string `json:"first_name"`
 		LastName   string `json:"last_name"`
-		Email      string `json:"email" validate:"email"`
-		UserStatus string `json:"user_status" validate:"oneof=A I T"`
+		Email      string `json:"email" validate:"omitempty,email"`
+		UserStatus string `json:"user_status" validate:"omitempty,oneof=A I T"`
 		Department string `json:"department"`
 	}
 )

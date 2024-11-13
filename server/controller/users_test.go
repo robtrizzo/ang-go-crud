@@ -30,6 +30,8 @@ var (
 	userInvalidNoUserNameJSON = `{"user_name":"","first_name":"Test","last_name":"User","email":"test@example.com","user_status":"A","department":"IT"}`
 	userInvalidUserStatusJSON = `{"user_name":"testuser","first_name":"Test","last_name":"User","email":"test@example.com","user_status":"R","department":"IT"}`
 	invalidJSON               = `{"user_name":"testuser","first_name":"Test","last_name":"User","email":"test@example.com","user_status":"A","department":"IT"`
+	userNoEmailJSON           = `{"user_name":"testuser","first_name":"Test","last_name":"User","user_status":"A","department":"IT"}`
+	userNoStatus              = `{"user_name":"testuser","first_name":"Test","last_name":"User","email":"test@example.com","department":"IT"}`
 	errFoo                    = errors.New("internal server error")
 	mockGetAllUsers           = func() ([]model.User, error) {
 		return []model.User{
@@ -101,6 +103,36 @@ func TestInsertUser(t *testing.T) {
 	e := echo.New()
 	e.Validator = &CustomValidator{validator: validator.New()}
 	req := httptest.NewRequest(http.MethodPost, "/users", strings.NewReader(userJSON))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	handler := InsertUser(mockInsertUser)
+	if assert.NoError(t, handler(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Contains(t, rec.Body.String(), "User inserted")
+	}
+}
+
+func TestInsertUserNoEmail(t *testing.T) {
+	e := echo.New()
+	e.Validator = &CustomValidator{validator: validator.New()}
+	req := httptest.NewRequest(http.MethodPost, "/users", strings.NewReader(userNoEmailJSON))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	handler := InsertUser(mockInsertUser)
+	if assert.NoError(t, handler(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Contains(t, rec.Body.String(), "User inserted")
+	}
+}
+
+func TestInsertUserNoStatus(t *testing.T) {
+	e := echo.New()
+	e.Validator = &CustomValidator{validator: validator.New()}
+	req := httptest.NewRequest(http.MethodPost, "/users", strings.NewReader(userNoStatus))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
