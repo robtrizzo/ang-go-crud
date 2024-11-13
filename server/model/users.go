@@ -76,6 +76,7 @@ func GetAllUsers() ([]User, error) {
 		}
 	}
 	var users []User
+	defer rows.Close()
 	for rows.Next() {
 		var user User
 		err := rows.Scan(&user.UserId, &user.UserName, &user.FirstName, &user.LastName, &user.Email, &user.UserStatus, &user.Department)
@@ -167,6 +168,8 @@ func GetUser(userId int64) (User, error) {
 	if err != nil {
 		return User{}, fmt.Errorf("failed to get user: %v", err)
 	}
+	defer rows.Close()
+
 	var user User
 	if rows.Next() {
 		err = rows.Scan(&user.UserId, &user.UserName, &user.FirstName, &user.LastName, &user.Email, &user.UserStatus, &user.Department)
