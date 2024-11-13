@@ -36,7 +36,7 @@ Navigate to the `/client` directory
 
 Run `npm install -g @angular/cli@16`
 
-Run `npm install --legacy-peer-deps`
+Run `npm install`
 
 Run `ng serve`
 
