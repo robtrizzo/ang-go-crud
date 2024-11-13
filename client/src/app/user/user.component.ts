@@ -16,8 +16,8 @@ import { HttpErrorResponse } from '@angular/common/http';
   standalone: true,
   imports: [CommonModule, MatCardModule, MatListModule, MatIconModule, MatButtonModule, RouterModule, MatDialogModule,],
   template: `
-  <section>
-    <mat-card class="user-card">
+  <section *ngIf="user">
+    <mat-card class="user-card" >
       <mat-card-title class="card-title">
         <h2>User: {{user.user_name}}</h2>
         <h3>User ID: {{user.user_id}}</h3>
@@ -33,13 +33,16 @@ import { HttpErrorResponse } from '@angular/common/http';
       </mat-card-content>
     </mat-card>
   </section>
-  <section class="user-actions">
+  <section class="user-actions" *ngIf="user">
     <button mat-stroked-button color="primary" aria-label="edit user" [routerLink]="['/users', user.user_id, 'edit']">
       <mat-icon>edit</mat-icon> Edit User
     </button>
     <button mat-stroked-button color="warn" aria-label="delete user" (click)="openDialog()">
       <mat-icon>delete</mat-icon> Delete User
     </button>
+  </section>
+  <section *ngIf="!user">
+    <h2 class="error-message">User {{userId}} Not Found</h2>
   </section>
   `,
   styleUrls: ['./user.component.css']
@@ -48,16 +51,14 @@ export class UserComponent implements OnInit {
   usersService: UsersService = inject(UsersService);
   route: ActivatedRoute = inject(ActivatedRoute);
   userId;
-  user: User = {
-    user_id: 0,
-    user_name: '',
-  };
+  user: User | undefined;
 
   constructor(public dialog: MatDialog) {
     this.userId = Number(this.route.snapshot.params['userId']);
   }
 
   openDialog(): void {
+    if (!this.user) return;
     const dialogRef = this.dialog.open(DeleteUserDialog, {
       data: {user_id: this.user.user_id, user_name: this.user.user_name},
     });

@@ -18,59 +18,62 @@ import { User } from '../user';
   standalone: true,
   imports: [CommonModule, MatCardModule, MatButtonModule, MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, NgIf, MatSelectModule, RouterModule],
   template: `
-    <mat-card class="user-card">
-    <mat-card-title class="card-title">
-      <h2>Edit User</h2>
-      <h3>User ID: {{user.user_id}}</h3>
-    </mat-card-title>
-    <mat-card-content>
-      <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="user-form">
-        <mat-form-field>
-          <mat-label>Username</mat-label>
-          <input matInput placeholder="thebatman" formControlName="user_name" required>
-          <mat-error *ngIf="userForm.get('user_name')?.hasError('required')">
-            Username is required
-          </mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>First Name</mat-label>
-          <input matInput placeholder="Bruce" formControlName="first_name">
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Last Name</mat-label>
-          <input matInput placeholder="Wayne" formControlName="last_name">
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Email</mat-label>
-          <input matInput placeholder="bruce@notbatman.com" formControlName="email">
-          <mat-error *ngIf="userForm.get('email')?.hasError('email')">
-              Please enter a valid email address
+    <mat-card class="user-card" *ngIf="user">
+      <mat-card-title class="card-title">
+        <h2>Edit User</h2>
+        <h3>User ID: {{user.user_id}}</h3>
+      </mat-card-title>
+      <mat-card-content>
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="user-form">
+          <mat-form-field>
+            <mat-label>Username</mat-label>
+            <input matInput placeholder="thebatman" formControlName="user_name" required>
+            <mat-error *ngIf="userForm.get('user_name')?.hasError('required')">
+              Username is required
             </mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>User Status</mat-label>
-          <mat-select formControlName="user_status">
-            <mat-option value="A">
-              Active
-            </mat-option>
-            <mat-option value="I">
-              Inactive
-            </mat-option>
-            <mat-option value="T">
-              Terminated
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Department</mat-label>
-          <input matInput placeholder="Philantropy" formControlName="department">
-        </mat-form-field>
-        <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid">Submit</button>
-        <button mat-raised-button color="accent" type="submit" [routerLink]="['/users', user.user_id]" class="cx-btn">Cancel</button>
-        <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-      </form>
-    </mat-card-content>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>First Name</mat-label>
+            <input matInput placeholder="Bruce" formControlName="first_name">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Last Name</mat-label>
+            <input matInput placeholder="Wayne" formControlName="last_name">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput placeholder="bruce@notbatman.com" formControlName="email">
+            <mat-error *ngIf="userForm.get('email')?.hasError('email')">
+                Please enter a valid email address
+              </mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>User Status</mat-label>
+            <mat-select formControlName="user_status">
+              <mat-option value="A">
+                Active
+              </mat-option>
+              <mat-option value="I">
+                Inactive
+              </mat-option>
+              <mat-option value="T">
+                Terminated
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Department</mat-label>
+            <input matInput placeholder="Philantropy" formControlName="department">
+          </mat-form-field>
+          <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid">Submit</button>
+          <button mat-raised-button color="accent" type="submit" [routerLink]="['/users', user.user_id]" class="cx-btn">Cancel</button>
+          <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+        </form>
+      </mat-card-content>
   </mat-card>
+  <section *ngIf="!user">
+    <h2 class="error-message">User {{userId}} Not Found</h2>
+  </section>
   `,
   styleUrls: ['./edit-user.component.css']
 })
@@ -79,10 +82,7 @@ export class EditUserComponent implements OnInit{
   router: Router = inject(Router);
   route: ActivatedRoute = inject(ActivatedRoute);
   userId;
-  user: User = {
-    user_id: 0,
-    user_name: '',
-  };
+  user: User | undefined;
   
   userForm: FormGroup;
   errorMessage: string | null = null;
