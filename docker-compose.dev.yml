@@ -10,6 +10,7 @@ services:
 
   db:
     image: postgres
+    container_name: db_pg
     hostname: localhost
     networks:
       - ang-go-crud-network
@@ -22,6 +23,7 @@ services:
     restart: unless-stopped
 
   server:
+    container_name: server_go
     depends_on:
       - db
     build:
@@ -37,6 +39,7 @@ services:
       - '1323:1323'
 
   client:
+    container_name: client_ang
     depends_on:
       - server
     build:
