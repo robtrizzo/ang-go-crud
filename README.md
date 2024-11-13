@@ -2,7 +2,7 @@
 
 View a table of users; create, edit, and delete them.
 
-Client uses Angular 16 with Material UI for 
+Client uses Angular 16 with Material
 
 Server uses Go 1.22
 
