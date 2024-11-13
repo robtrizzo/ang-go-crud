@@ -24,6 +24,16 @@ export type SubmitUser = {
     department?: string | undefined;
 }
 
+// we don't need user_id when updating the user
+export type UpdateUser = {
+    user_name: string;
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    email?: string | undefined;
+    user_status?: UserStatus;
+    department?: string | undefined;
+}
+
 /**
  * Normally I wouldn't write my own regex since it can get the better of
  * the best of us, but I didn't want to spend even more time searching for
@@ -35,11 +45,11 @@ function isValidEmail(email: string): boolean {
 }
 
 /**
- * 
  * I'm also using the built in angular vailidator on the form fields but,
  * I wanted to be extra safe in case of particularly capable michevous
  * users
  */
+
 export function validateSubmitUser(user: SubmitUser): string[] {
     const errors: string[] = [];
 
@@ -49,6 +59,24 @@ export function validateSubmitUser(user: SubmitUser): string[] {
 
     if (user.email && !isValidEmail(user.email)) {
         errors.push('Invalid email address.');
+    }
+
+    return errors;
+}
+
+export function validateUpdateUser(user: UpdateUser): string[] {
+    const errors: string[] = [];
+
+    if (!user.user_name) {
+        errors.push('User name is required.');
+    }
+
+    if (user.email && !isValidEmail(user.email)) {
+        errors.push('Invalid email address.');
+    }
+
+    if (user.user_status && !Object.values(UserStatus).includes(user.user_status)) {
+        errors.push('Invalid user status.');
     }
 
     return errors;

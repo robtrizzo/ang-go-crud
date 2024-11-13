@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {FormControl, Validators, FormsModule, FormGroup, FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {NgIf} from '@angular/common';
@@ -6,20 +6,23 @@ import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import {MatSelectModule} from '@angular/material/select';
 import { UsersService } from '../users.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { Observer } from 'rxjs';
-import { SubmitUser } from '../user';
+import { UpdateUser, UserStatus } from '../user';
 import { HttpErrorResponse } from '@angular/common/http';
+import { User } from '../user';
 
 @Component({
-  selector: 'app-new-user',
+  selector: 'app-edit-user',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, NgIf],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, NgIf, MatSelectModule, RouterModule],
   template: `
-  <mat-card class="user-card">
-    <mat-card-title>
-      <h2 class="card-title">Create New User</h2>
+    <mat-card class="user-card">
+    <mat-card-title class="card-title">
+      <h2>Edit User</h2>
+      <h3>User ID: {{user.user_id}}</h3>
     </mat-card-title>
     <mat-card-content>
       <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="user-form">
@@ -46,34 +49,74 @@ import { HttpErrorResponse } from '@angular/common/http';
             </mat-error>
         </mat-form-field>
         <mat-form-field>
+          <mat-label>User Status</mat-label>
+          <mat-select formControlName="user_status">
+            <mat-option value="A">
+              Active
+            </mat-option>
+            <mat-option value="I">
+              Inactive
+            </mat-option>
+            <mat-option value="T">
+              Terminated
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
           <mat-label>Department</mat-label>
           <input matInput placeholder="Philantropy" formControlName="department">
         </mat-form-field>
         <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid">Submit</button>
+        <button mat-raised-button color="accent" type="submit" [routerLink]="['/users', user.user_id]" class="cx-btn">Cancel</button>
         <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
       </form>
     </mat-card-content>
   </mat-card>
   `,
-  styleUrls: ['./new-user.component.css']
+  styleUrls: ['./edit-user.component.css']
 })
-export class NewUserComponent {
+export class EditUserComponent implements OnInit{
   usersService: UsersService = inject(UsersService);
   router: Router = inject(Router);
-
+  route: ActivatedRoute = inject(ActivatedRoute);
+  userId;
+  user: User = {
+    user_id: 0,
+    user_name: '',
+  };
+  
   userForm: FormGroup;
   errorMessage: string | null = null;
-
+  
   email = new FormControl('', [Validators.required, Validators.email]);
-
+  
   constructor(private fb: FormBuilder) {
+    this.userId = Number(this.route.snapshot.params['userId']);
     this.userForm = this.fb.group({
       user_name: [undefined, Validators.required],
       first_name: [undefined],
       last_name: [undefined],
       email: [undefined, [Validators.email]],
+      user_status: [UserStatus, Validators.required],
       department: [undefined]
     });
+  }
+
+  ngOnInit() {
+    const userObserver: Observer<User> = {
+      next: (user: User) => {
+        this.user = user;
+        this.userForm.patchValue(user)
+      },
+      error: (err: any) => {
+        console.error('Error fetching user', err);
+      },
+      complete: () => {
+        console.log('Users fetch complete');
+      }
+    };
+
+    this.usersService.getUser(this.userId).subscribe(userObserver);
   }
 
   getErrorMessage() {
@@ -86,22 +129,22 @@ export class NewUserComponent {
 
   onSubmit() {
     if (this.userForm.valid) {
-      const createUserObserver: Observer<String> = {
+      const updateUserObserver: Observer<String> = {
         next: () => {
         },
         error: (err: any) => {
-          console.error('Error creating user', err);
+          console.error('Error updating user', err);
           // api response
           if (err instanceof HttpErrorResponse) { 
-            this.errorMessage = 'Error creating user: ' + err.error;
+            this.errorMessage = 'Error updating user: ' + err.error;
           } else { 
             // client side validation error
-            this.errorMessage = 'Error creating user: ' + err;
+            this.errorMessage = 'Error updating user: ' + err;
           }
         },
         complete: () => {
-          console.log('User created successfully');
-          this.router.navigate(['/'])
+          console.log('User updated successfully');
+          this.router.navigate(['/users', this.userId])
         }
       };
       /**
@@ -113,7 +156,7 @@ export class NewUserComponent {
        * 
        * so this is a bit of a hack to only send fields with data
        */
-      const userToSubmit : SubmitUser = {
+      const userToSubmit : UpdateUser = {
         user_name: this.userForm.value.user_name
       }
       if (this.userForm.value.first_name) {
@@ -125,10 +168,13 @@ export class NewUserComponent {
       if (this.userForm.value.email) {
         userToSubmit.email = this.userForm.value.email
       }
+      if (this.userForm.value.user_status) {
+        userToSubmit.user_status = this.userForm.value.user_status
+      }
       if (this.userForm.value.department) {
         userToSubmit.department = this.userForm.value.department
       }
-      this.usersService.createUser(userToSubmit).subscribe(createUserObserver)
+      this.usersService.updateUser(this.userId, userToSubmit).subscribe(updateUserObserver)
     }
   }
 }
