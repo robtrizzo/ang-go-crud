@@ -45,8 +45,30 @@ Navigate to `http://localhost:4200` to view the client.
 
 ## Testing
 
-### Server
+### With Docker
+
+#### Server
+
+Run `docker exec -it server_go go test ./controller`
+
+#### Client
+
+For now, run client tests locally after installing dependencies.
+
+TODO: requires adding a chrome binary to the client docker image. 
+
+Could even be worth creating a standalone container for the purpose of testing so that the client dev container doesn't get bloated.
+
+### Without Docker
+
+#### Server
 
 Navigate to `/server`
 
 Run `go test ./controller`
+
+#### Client
+
+Navigate to `/client`
+
+Run `ng test`
