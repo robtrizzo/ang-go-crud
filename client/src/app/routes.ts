@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { DetailsComponent } from './details/details.component';
+import { NewUserComponent } from './new-user/new-user.component';
 
 const routeConfig: Routes = [
     {
@@ -9,10 +9,10 @@ const routeConfig: Routes = [
       title: 'Home page'
     },
     {
-      path: 'details/:id',
-      component: DetailsComponent,
-      title: 'Home details'
-    }
+        path: 'users/new',
+        component: NewUserComponent,
+        title: 'Create a User'
+      },
   ];
   
   export default routeConfig;
