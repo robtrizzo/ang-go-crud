@@ -1,10 +1,13 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { User } from '../user';
 import { UsersService } from '../users.service';
 import { MatButtonModule } from '@angular/material/button';
 import {MatTableModule} from '@angular/material/table';
 import { RouterModule, Router } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
+import { Observer } from 'rxjs';
+
 
 @Component({
   selector: 'app-home',
@@ -13,7 +16,8 @@ import { RouterModule, Router } from '@angular/router';
     CommonModule,
     MatButtonModule,
     MatTableModule,
-    RouterModule
+    RouterModule,
+    HttpClientModule
   ],
   template: `
     <section class="container">
@@ -47,14 +51,14 @@ import { RouterModule, Router } from '@angular/router';
         <td mat-cell *matCellDef="let user"> {{user.department}} </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="navigateToUser(row)"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="navigateToUser(row)" class="clickable-row"></tr>
      </table>
      <button mat-stroked-button class="add-new-button" routerLink="/users/new">Add New User</button>
     </section>
   `,
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
 
   usersService: UsersService = inject(UsersService);
   router: Router = inject(Router);
@@ -62,10 +66,20 @@ export class HomeComponent {
   users: User[] = [];
   displayedColumns: string[] = ["user_id", "user_name", "first_name", "last_name", "email", "user_status", "department" ]
 
-  constructor() {
-    this.usersService.getAllUsers().then(users => {
-      this.users = users;
-    });
+  ngOnInit() {
+    const usersObserver: Observer<User[]> = {
+      next: (users: User[]) => {
+        this.users = users;
+      },
+      error: (err: any) => {
+        console.error('Error fetching users', err);
+      },
+      complete: () => {
+        console.log('Users fetch complete');
+      }
+    };
+
+    this.usersService.getAllUsers().subscribe(usersObserver);
   }
 
   navigateToUser(user: User) {
