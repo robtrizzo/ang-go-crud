@@ -15,7 +15,7 @@ type GetAllUsersFunc func() ([]model.User, error)
 
 func GetAllUsers(getAllUsers GetAllUsersFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		fmt.Printf("GetAllUsers\n")
+		fmt.Println("GET /users")
 		users, err := getAllUsers()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error in GetAllUsers controller: %v\n", err)
@@ -29,7 +29,7 @@ type InsertUsersFunc func(model.User) error
 
 func InsertUser(insertUser InsertUsersFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		fmt.Printf("insert user controller")
+		fmt.Println("POST /users")
 		userToInsert := new(model.User)
 		if err := c.Bind(userToInsert); err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request payload"})
@@ -50,6 +50,7 @@ type GetUserFunc func(int64) (model.User, error)
 func GetUser(getUser GetUserFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userIdStr := c.Param("userId")
+		fmt.Printf("GET /users/%s\n", userIdStr)
 		userId, err := strconv.ParseInt(userIdStr, 10, 64)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid user ID"})
@@ -70,6 +71,7 @@ type UpdateUserFunc func(int64, model.User) error
 func UpdateUser(updateUser UpdateUserFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userIdStr := c.Param("userId")
+		fmt.Printf("PUT /users/%s\n", userIdStr)
 		userId, err := strconv.ParseInt(userIdStr, 10, 64)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid user ID"})
@@ -98,6 +100,7 @@ type DeleteUserFunc func(int64) error
 func DeleteUser(delteUser DeleteUserFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userIdStr := c.Param("userId")
+		fmt.Printf("DELETE /users/%s\n", userIdStr)
 		userId, err := strconv.ParseInt(userIdStr, 10, 64)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid user ID"})
